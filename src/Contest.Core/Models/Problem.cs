@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Contest.Core.Models
+﻿namespace Contest.Core.Models
 {
-    class Problem
+    public class Problem
     {
+        public string ProblemText { get; internal set; }
+        public Map Map { get; set; }
     }
 }

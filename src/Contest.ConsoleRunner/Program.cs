@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Contest.Console
+namespace Contest.ConsoleRunner
 {
     class Program
     {
