@@ -4,15 +4,15 @@ using System.Linq;
 
 namespace Contest.Controllers.RobotControllers
 {
-    public class SimpleController
+    public class ScoreSingleActionsController : IRobotController
     {
         public Problem Problem { get; }
-        public DijkstraController DijkstraController { get; }
+        public IRobotController NextController { get; }
 
-        public SimpleController(Problem problem)
+        public ScoreSingleActionsController(Problem problem, IRobotController nextController)
         {
             Problem = problem;
-            DijkstraController = new DijkstraController(problem);
+            NextController = nextController;
         }
 
         public IEnumerable<RobotAction> GetNextActions(Robot robot)
@@ -42,7 +42,7 @@ namespace Contest.Controllers.RobotControllers
                 return new[] { bestAction };
             }
 
-            return DijkstraController.GetNextActions(robot).Take(1);
+            return NextController.GetNextActions(robot).Take(1);
         }
     }
 }

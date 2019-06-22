@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Contest.Controllers.RobotControllers
 {
-    public class DijkstraController
+    public class DijkstraController : IRobotController
     {
         public Problem Problem { get; }
 

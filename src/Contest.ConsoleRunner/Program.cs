@@ -35,7 +35,8 @@ namespace Contest.ConsoleRunner
                 var problem = ProblemLoader.LoadProblem(p, a.CacheFolder);
                 Console.WriteLine($"Working on {problem.Name}");
 
-                var controller = new SimpleController(problem);
+                var controller = new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem)));
+                var done = false;
 
                 do
                 {
@@ -48,11 +49,16 @@ namespace Contest.ConsoleRunner
                             File.WriteAllText(solutionFile, problem.Solution);
 
                             Console.WriteLine($"Done with {problem.Name}");
+                            done = true;
                             break;
                         }
 
-                        problem.ProcessAction(robot, actions);
+                        if (!done)
+                            problem.ProcessAction(robot, actions);
                     }
+
+                    if (done)
+                        break;
                 } while (true);
             });
         }

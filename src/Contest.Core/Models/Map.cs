@@ -104,10 +104,19 @@ namespace Contest.Core.Models
             return Cells[y][x];
         }
 
-        public IEnumerable<Point> Neighbors(Point current)
+        public IEnumerable<Point> Neighbors(Point pos)
         {
-            var np = new[] { current.Up(), current.Down(), current.Left(), current.Right() };
+            var np = new[] { pos.Up(), pos.Down(), pos.Left(), pos.Right() };
             return np.Where(x => CellAt(x) != CellType.Wall);
+        }
+
+        public IEnumerable<Point> Neighbors(Point pos, bool unwrappedBlocks)
+        {
+            var np = new[] { pos.Up(), pos.Down(), pos.Left(), pos.Right() };
+            var neighbors = np.Where(x => CellAt(x) != CellType.Wall);
+            if (unwrappedBlocks)
+                neighbors = neighbors.Where(x => CellAt(x) != CellType.Wrapped);
+            return neighbors;
         }
 
         public void SetCell(Point p, CellType type)

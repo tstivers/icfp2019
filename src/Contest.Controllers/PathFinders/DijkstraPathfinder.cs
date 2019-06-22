@@ -25,10 +25,10 @@ namespace Contest.Controllers.PathFinders
                     return GetActions(start, u, prev);
                 }
 
+                var alt = dist[u] + 1;
+
                 foreach (var v in map.Neighbors(u))
                 {
-                    var alt = dist[u] + 1;
-
                     if (!dist.ContainsKey(v) || alt < dist[v])
                     {
                         dist[v] = alt;
@@ -66,6 +66,47 @@ namespace Contest.Controllers.PathFinders
             }
 
             return Tuple.Create(end, new Queue<RobotAction>(path.Reverse()));
+        }
+
+        public static HashSet<Point> FindUnwrappedCellsWithin(Point start, Map map, int maxDistance, bool unwrappedBlocks)
+        {
+            var dist = new Dictionary<Point, int>();
+            var prev = new Dictionary<Point, Point>();
+            var Q = new SimplePriorityQueue<Point, int>();
+
+            var found = new HashSet<Point>();
+
+            dist[start] = 0;
+            Q.Enqueue(start, 0);
+
+            while (Q.Count > 0)
+            {
+                var u = Q.Dequeue();
+                if (map.CellAt(u) == Map.CellType.Empty)
+                {
+                    found.Add(u);
+                }
+
+                var alt = dist[u] + 1;
+
+                if (alt > maxDistance)
+                    continue;
+
+                foreach (var v in map.Neighbors(u, unwrappedBlocks))
+                {
+                    if (!dist.ContainsKey(v) || alt < dist[v])
+                    {
+                        dist[v] = alt;
+                        prev[v] = u;
+                        if (Q.Contains(v))
+                            Q.UpdatePriority(v, alt);
+                        else
+                            Q.Enqueue(v, alt);
+                    }
+                }
+            };
+
+            return found;
         }
     }
 }

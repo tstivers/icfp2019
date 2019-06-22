@@ -12,13 +12,13 @@ namespace Contest.Visualizer
     {
         public static RLRootConsole rootConsole;
         public static Problem problem;
-        public static SimpleController controller;
+        public static IRobotController controller;
 
         public static void Main()
         {
             var problemsPath = ProblemsFinder.FindProblemsFolderPath();
-            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-002.desc"), null);
-            controller = new SimpleController(problem);
+            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-290.desc"), null);
+            controller = new CheckTurnsController(problem, new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem))));
 
             RLSettings settings = new RLSettings();
             settings.BitmapFile = "ascii_8x8.png";
@@ -58,7 +58,7 @@ namespace Contest.Visualizer
                 {
                     var problemsPath = ProblemsFinder.FindProblemsFolderPath();
                     problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, problem.Name + ".desc"), null);
-                    controller = new SimpleController(problem);
+                    controller = new ScoreSingleActionsController(problem, new DijkstraController(problem));
                     start = false;
                 }
 
@@ -116,6 +116,10 @@ namespace Contest.Visualizer
 
                 if (r.Target.HasValue)
                     rootConsole.SetBackColor(r.Target.Value, RLColor.Blue);
+
+                if (r.Targets != null)
+                    foreach (var t in r.Targets)
+                        rootConsole.SetBackColor(t, RLColor.Red);
 
                 foreach (var arm in r.Arms)
                 {

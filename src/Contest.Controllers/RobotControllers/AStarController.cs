@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace Contest.Controllers.RobotControllers
 {
-    public class SimplestController
+    public class AStarController : IRobotController
     {
         public Problem Problem { get; }
 
-        public SimplestController(Problem problem)
+        public AStarController(Problem problem)
         {
             Problem = problem;
         }

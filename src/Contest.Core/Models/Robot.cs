@@ -24,6 +24,7 @@ namespace Contest.Core.Models
         public Point? PriorTarget { get; set; }
 
         public List<RobotAction> Actions { get; } = new List<RobotAction>();
+        public List<Point> Targets { get; set; }
 
         public Robot()
         {
