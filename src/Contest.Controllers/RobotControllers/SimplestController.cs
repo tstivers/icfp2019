@@ -9,37 +9,57 @@ namespace Contest.Controllers.RobotControllers
     {
         public Problem Problem { get; }
 
+        public Point? PriorTarget { get; set; }
+
         public SimplestController(Problem problem)
         {
             Problem = problem;
         }
 
-        public IEnumerable<RobotAction> GetNextAction()
+        public IEnumerable<RobotAction> GetNextActions()
         {
             // find the closest unwrapped cells
             var finder = new SimpleTargetSelector(Problem.Map);
 
             var targets = finder.GetPotentialTargets(Problem.Robot.Position, 1);
 
-            // sort them by moves
+            Problem.Targets = targets;
 
-            Point? target = null;
-            if (targets.Count > 1)
-            {
-                // pick the first one duh
-                target = targets[0];
-            }
-            else if (targets.Count == 1)
-                target = targets[0];
-            else if (targets.Count == 0)
+            // sort them by moves
+            var bestScore = int.MaxValue;
+            Queue<RobotAction> bestRoute = null;
+
+            if (targets.Count == 0)
                 return new[] { RobotAction.Done };
 
-            // get a path to it
             var rf = new AStarRouteFinder(Problem.Map);
 
-            var route = rf.GetRouteTo(Problem.Robot.Position, target.Value);
+            foreach (var p in targets)
+            {
+                var route = rf.GetRouteTo(Problem.Robot.Position, p);
 
-            return route;
+                if (route.Count <= bestScore)
+                {
+                    bestScore = route.Count;
+                    bestRoute = route;
+                    Problem.Target = p;
+                }
+            }
+
+            if (PriorTarget != null && Problem.Target != PriorTarget)
+            {
+                var priorRoute = rf.GetRouteTo(Problem.Robot.Position, PriorTarget.Value);
+                if (priorRoute.Count != 0)
+                {
+                    if (priorRoute.Count <= bestScore)
+                    {
+                        return priorRoute;
+                    }
+                }
+            }
+
+            PriorTarget = Problem.Target;
+            return bestRoute;
         }
     }
 }

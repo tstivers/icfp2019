@@ -74,6 +74,9 @@ namespace Contest.Controllers.PathFinders
 
         private float MoveCost(Point current, Point neighbor)
         {
+            //if (Map.CellAt(neighbor) == Map.CellType.Wrapped)
+            //    return 10;
+
             return 1;
         }
 

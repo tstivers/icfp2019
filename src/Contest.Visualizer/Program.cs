@@ -12,11 +12,13 @@ namespace Contest.Visualizer
     {
         public static RLRootConsole rootConsole;
         public static Problem problem;
+        public static SimpleController controller;
 
         public static void Main()
         {
             var problemsPath = ProblemsFinder.FindProblemsFolderPath();
-            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-149.desc"));
+            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-100.desc"), null);
+            controller = new SimpleController(problem);
 
             RLSettings settings = new RLSettings();
             settings.BitmapFile = "ascii_8x8.png";
@@ -37,6 +39,8 @@ namespace Contest.Visualizer
             rootConsole.Run();
         }
 
+        private static bool start = false;
+
         private static void rootConsole_Update(object sender, UpdateEventArgs e)
         {
             RLKeyPress keyPress = rootConsole.Keyboard.GetKeyPress();
@@ -47,6 +51,21 @@ namespace Contest.Visualizer
 
                 if (keyPress.Key == RLKey.Space)
                 {
+                    start = !start;
+                }
+
+                if (keyPress.Key == RLKey.R)
+                {
+                    var problemsPath = ProblemsFinder.FindProblemsFolderPath();
+                    problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-026.desc"), null);
+                    controller = new SimpleController(problem);
+                    start = false;
+                }
+
+                if (keyPress.Key == RLKey.S)
+                {
+                    var actions = controller.GetNextActions();
+                    problem.ProcessAction(actions);
                 }
             }
 
@@ -55,9 +74,11 @@ namespace Contest.Visualizer
                 Console.WriteLine($"Mouse: {rootConsole.Mouse.X}, {problem.Map.Height - rootConsole.Mouse.Y - 1}");
             }
 
-            var controller = new SimplestController(problem);
-            var actions = controller.GetNextAction();
-            problem.ProcessAction(actions);
+            if (start)
+            {
+                var actions = controller.GetNextActions();
+                problem.ProcessAction(actions);
+            }
         }
 
         private static void rootConsole_Render(object sender, UpdateEventArgs e)
@@ -70,6 +91,15 @@ namespace Contest.Visualizer
             rootConsole.SetChar(problem.Robot.Position.X, problem.Map.Height - problem.Robot.Position.Y - 1, 'R');
             rootConsole.SetColor(problem.Robot.Position.X, problem.Map.Height - problem.Robot.Position.Y - 1, RLColor.LightGreen);
             rootConsole.SetBackColor(problem.Robot.Front.X, problem.Map.Height - problem.Robot.Front.Y - 1, RLColor.LightGreen);
+
+            if (problem.Targets != null)
+                foreach (var target in problem.Targets)
+                {
+                    rootConsole.SetBackColor(target, RLColor.LightBlue);
+                }
+
+            if (problem.Target.HasValue)
+                rootConsole.SetBackColor(problem.Target.Value, RLColor.Blue);
 
             rootConsole.Draw();
         }

@@ -31,6 +31,14 @@ namespace Contest.Core.Models
                     Cells[y][x] = CellType.Wall;
         }
 
+        public Map(CellType[][] cells)
+        {
+            Cells = cells;
+
+            Width = cells[0].Length;
+            Height = cells.Length;
+        }
+
         public void FillPoly(List<Point> points, CellType cellType)
         {
             if (points.Count == 0)
@@ -94,6 +102,14 @@ namespace Contest.Core.Models
         {
             var np = new[] { current.Up(), current.Down(), current.Left(), current.Right() };
             return np.Where(x => CellAt(x) != CellType.Wall);
+        }
+
+        public void SetCell(Point p, CellType type)
+        {
+            if (p.X < 0 || p.X >= Width || p.Y < 0 || p.Y >= Height)
+                return;
+
+            Cells[p.Y][p.X] = type;
         }
     }
 }

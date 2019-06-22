@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Contest.ConsoleRunner": {
+      "commandName": "Project",
+      "commandLineArgs": "-p c:\\users\\tstivers\\source\\repos\\icfp2019\\problems -s c:\\users\\tstivers\\source\\repos\\icfp2019\\solutions -c c:\\users\\tstivers\\source\\repos\\icfp2019\\cache"
+    }
+  }
+}

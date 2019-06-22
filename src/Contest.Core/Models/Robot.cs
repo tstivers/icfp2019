@@ -1,4 +1,6 @@
-﻿namespace Contest.Core.Models
+﻿using Contest.Core.Extensions;
+
+namespace Contest.Core.Models
 {
     public enum Direction
     {
@@ -15,5 +17,10 @@
         public Direction Facing { get; set; }
 
         public Point Front => Position.Translate(Facing);
+
+        public void Rotate(Direction direction)
+        {
+            Facing = Facing.Rotate(direction);
+        }
     }
 }

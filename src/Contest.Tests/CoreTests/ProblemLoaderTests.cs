@@ -21,7 +21,7 @@ namespace Contest.Tests.CoreTests
         {
             var problemFile = Path.Join(ProblemsFolderPath, "prob-051.desc");
 
-            var p = ProblemLoader.LoadProblem(problemFile);
+            var p = ProblemLoader.LoadProblem(problemFile, null);
         }
     }
 }
