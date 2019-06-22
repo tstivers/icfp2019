@@ -1,4 +1,5 @@
-﻿using Contest.Core.Helpers;
+﻿using Contest.Controllers.RobotControllers;
+using Contest.Core.Helpers;
 using Contest.Core.Loaders;
 using Contest.Core.Models;
 using RLNET;
@@ -15,7 +16,7 @@ namespace Contest.Visualizer
         public static void Main()
         {
             var problemsPath = ProblemsFinder.FindProblemsFolderPath();
-            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-130.desc"));
+            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-149.desc"));
 
             RLSettings settings = new RLSettings();
             settings.BitmapFile = "ascii_8x8.png";
@@ -23,7 +24,7 @@ namespace Contest.Visualizer
             settings.CharHeight = 8;
             settings.Width = problem.Map.Width;
             settings.Height = problem.Map.Height;
-            settings.Scale = 0.5f;
+            settings.Scale = 1.0f;
             settings.Title = "RLNET Sample";
             //settings.WindowBorder = RLWindowBorder.Resizable;
             //settings.ResizeType = RLResizeType.ResizeCells;
@@ -43,12 +44,20 @@ namespace Contest.Visualizer
             {
                 if (keyPress.Key == RLKey.Escape)
                     rootConsole.Close();
+
+                if (keyPress.Key == RLKey.Space)
+                {
+                }
             }
 
             if (rootConsole.Mouse.GetLeftClick())
             {
                 Console.WriteLine($"Mouse: {rootConsole.Mouse.X}, {problem.Map.Height - rootConsole.Mouse.Y - 1}");
             }
+
+            var controller = new SimplestController(problem);
+            var actions = controller.GetNextAction();
+            problem.ProcessAction(actions);
         }
 
         private static void rootConsole_Render(object sender, UpdateEventArgs e)
@@ -57,6 +66,10 @@ namespace Contest.Visualizer
             for (int y = 0; y < problem.Map.Height; y++)
                 for (int x = 0; x < problem.Map.Width; x++)
                     rootConsole.SetChar(x, problem.Map.Height - y - 1, (char)problem.Map.Cells[y][x]);
+
+            rootConsole.SetChar(problem.Robot.Position.X, problem.Map.Height - problem.Robot.Position.Y - 1, 'R');
+            rootConsole.SetColor(problem.Robot.Position.X, problem.Map.Height - problem.Robot.Position.Y - 1, RLColor.LightGreen);
+            rootConsole.SetBackColor(problem.Robot.Front.X, problem.Map.Height - problem.Robot.Front.Y - 1, RLColor.LightGreen);
 
             rootConsole.Draw();
         }

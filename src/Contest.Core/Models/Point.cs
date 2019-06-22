@@ -45,5 +45,38 @@ namespace Contest.Core.Models
         {
             return !left.Equals(right);
         }
+
+        public Point Translate(Direction facing)
+        {
+            switch (facing)
+            {
+                case Direction.Up: return new Point(X, Y + 1);
+                case Direction.Down: return new Point(X, Y - 1);
+                case Direction.Right: return new Point(X + 1, Y);
+                case Direction.Left: return new Point(X - 1, Y);
+            }
+
+            throw new ArgumentException();
+        }
+
+        public Point Up()
+        {
+            return Translate(Direction.Up);
+        }
+
+        public Point Down()
+        {
+            return Translate(Direction.Down);
+        }
+
+        public Point Left()
+        {
+            return Translate(Direction.Left);
+        }
+
+        public Point Right()
+        {
+            return Translate(Direction.Right);
+        }
     }
 }

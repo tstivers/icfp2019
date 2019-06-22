@@ -1,5 +1,4 @@
-﻿using Contest.Core.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,6 +10,7 @@ namespace Contest.Core.Models
         {
             Wall = '#',
             Empty = ' ',
+            Wrapped = '+'
         }
 
         public CellType[][] Cells { get; }
@@ -82,22 +82,18 @@ namespace Contest.Core.Models
             return count;
         }
 
-        private void DrawLine(Point a, Point b, CellType cellType)
+        public CellType CellAt(Point p)
         {
-            var dx = MathExtensions.Clamp(b.X - a.X, -1, 1);
-            var dy = MathExtensions.Clamp(b.Y - a.Y, -1, 1);
+            if (p.X < 0 || p.X >= Width || p.Y < 0 || p.Y >= Height)
+                return CellType.Wall;
 
-            Console.WriteLine($"Line: {a} - {b}");
+            return Cells[p.Y][p.X];
+        }
 
-            var p = a;
-            while (p != b)
-            {
-                Cells[p.Y][p.X] = cellType;
-                p.X += dx;
-                p.Y += dy;
-            }
-
-            Cells[p.Y][p.X] = cellType;
+        public IEnumerable<Point> Neighbors(Point current)
+        {
+            var np = new[] { current.Up(), current.Down(), current.Left(), current.Right() };
+            return np.Where(x => CellAt(x) != CellType.Wall);
         }
     }
 }

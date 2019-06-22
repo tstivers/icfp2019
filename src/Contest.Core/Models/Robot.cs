@@ -1,10 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Contest.Core.Models
+﻿namespace Contest.Core.Models
 {
-    class Robot
+    public enum Direction
     {
+        Up,
+        Down,
+        Left,
+        Right
+    };
+
+    public class Robot
+    {
+        public Point Position { get; set; }
+
+        public Direction Facing { get; set; }
+
+        public Point Front => Position.Translate(Facing);
     }
 }

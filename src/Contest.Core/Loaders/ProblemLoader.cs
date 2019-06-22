@@ -26,6 +26,12 @@ namespace Contest.Core.Loaders
             var maxX = mapPolies.Max(x => x.X);
             var maxY = mapPolies.Max(x => x.Y);
 
+            p.Robot = new Robot
+            {
+                Position = startPos,
+                Facing = Direction.Right
+            };
+
             p.Map = new Map(maxX, maxY);
 
             p.Map.FillPoly(mapPolies, Map.CellType.Empty);

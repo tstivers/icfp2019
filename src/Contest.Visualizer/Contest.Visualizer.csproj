@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="C5, Version=2.5.0.0, Culture=neutral, PublicKeyToken=282361b99ded7e8e, processorArchitecture=MSIL">
+      <HintPath>..\packages\C5.2.5.3\lib\net45\C5.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
     </Reference>
@@ -62,6 +65,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Contest.Controllers\Contest.Controllers.csproj">
+      <Project>{EB66E744-F1AD-4904-8E04-75F3069F655B}</Project>
+      <Name>Contest.Controllers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Contest.Core\Contest.Core.csproj">
       <Project>{7F6BBD8B-8856-496E-9A58-05991D90AD0E}</Project>
       <Name>Contest.Core</Name>
