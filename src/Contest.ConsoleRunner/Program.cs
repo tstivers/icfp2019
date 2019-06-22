@@ -35,7 +35,7 @@ namespace Contest.ConsoleRunner
                 var problem = ProblemLoader.LoadProblem(p, a.CacheFolder);
                 Console.WriteLine($"Working on {problem.Name}");
 
-                var controller = new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem)));
+                var controller = new ScoreTurnActionsController(problem, new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem))));
                 var done = false;
 
                 do

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Contest.Controllers.RobotControllers
 {
-    public class CheckTurnsController : RobotControllerBase, IRobotController
+    public class ScoreTurnActionsController : RobotControllerBase, IRobotController
     {
         public IEnumerable<RobotAction> GetNextActions(Robot robot)
         {
@@ -33,7 +33,7 @@ namespace Contest.Controllers.RobotControllers
             return new[] { bestAction };
         }
 
-        public CheckTurnsController(Problem problem, IRobotController nextController) : base(problem, nextController)
+        public ScoreTurnActionsController(Problem problem, IRobotController nextController) : base(problem, nextController)
         {
         }
     }

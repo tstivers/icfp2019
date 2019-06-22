@@ -69,13 +69,12 @@ namespace Contest.Controllers.RobotControllers
             // find the closest point in the smallest island
             var closestScore = int.MaxValue;
             IEnumerable<RobotAction> closestRoute = null;
-            var finder = new AStarRouteFinder(Problem.Map);
 
             foreach (var target in islands.OrderBy(x => x.Value.Count).First().Value)
             {
-                var result = finder.GetRouteTo(robot.Position, target);
+                var result = AStarPathFinder.GetRouteTo(robot.Position, target, Problem.Map, closestScore);
 
-                if (result.Count < closestScore)
+                if (result != null && result.Count < closestScore)
                 {
                     closestScore = result.Count;
                     closestRoute = result;

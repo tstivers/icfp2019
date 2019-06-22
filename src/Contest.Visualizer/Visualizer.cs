@@ -95,7 +95,7 @@ namespace Contest.Visualizer
         {
             var problemsPath = ProblemsFinder.FindProblemsFolderPath();
             problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-021.desc"), null);
-            controller = new CheckTurnsController(problem, new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem))));
+            controller = new ScoreTurnActionsController(problem, new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem))));
             //controller = new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem)));
             //controller = new ScoreSingleActionsController(problem, new DijkstraController(problem));
             start = false;

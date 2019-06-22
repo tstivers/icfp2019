@@ -28,11 +28,9 @@ namespace Contest.Controllers.RobotControllers
             if (targets.Count == 0)
                 return new[] { RobotAction.Done };
 
-            var rf = new AStarRouteFinder(Problem.Map);
-
             foreach (var p in targets)
             {
-                var route = rf.GetRouteTo(robot.Position, p);
+                var route = AStarPathFinder.GetRouteTo(robot.Position, p, Problem.Map);
 
                 if (route.Count <= bestScore)
                 {
@@ -44,7 +42,7 @@ namespace Contest.Controllers.RobotControllers
 
             if (robot.PriorTarget != null && robot.Target != robot.PriorTarget)
             {
-                var priorRoute = rf.GetRouteTo(robot.Position, robot.PriorTarget.Value);
+                var priorRoute = AStarPathFinder.GetRouteTo(robot.Position, robot.PriorTarget.Value, Problem.Map);
                 if (priorRoute.Count != 0)
                 {
                     if (priorRoute.Count <= bestScore)
