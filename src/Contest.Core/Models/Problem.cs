@@ -45,31 +45,8 @@ namespace Contest.Core.Models
 
         public void WrapArms(Robot robot)
         {
-            Wrap(robot.Position.Translate(robot.Facing));
-
-            if (robot.Facing == Direction.Right)
-            {
-                Wrap(robot.Position.Right().Up());
-                Wrap(robot.Position.Right().Down());
-            }
-
-            if (robot.Facing == Direction.Left)
-            {
-                Wrap(robot.Position.Left().Up());
-                Wrap(robot.Position.Left().Down());
-            }
-
-            if (robot.Facing == Direction.Up)
-            {
-                Wrap(robot.Position.Up().Left());
-                Wrap(robot.Position.Up().Right());
-            }
-
-            if (robot.Facing == Direction.Down)
-            {
-                Wrap(robot.Position.Down().Left());
-                Wrap(robot.Position.Down().Right());
-            }
+            foreach (var arm in robot.Arms)
+                Wrap(robot.Position.Translate(arm));
         }
 
         public void Wrap(Point point)
@@ -104,47 +81,25 @@ namespace Contest.Core.Models
                     score = 1;
 
                 // calc arms
-                score += TryWrapArms(robot.Facing, newPos);
+                score += TryWrapArms(newPos, robot.Arms);
             }
 
             if (action is RobotTurnAction turnAction)
             {
                 var newFacing = robot.Facing.Rotate(turnAction.Direction);
-                score += TryWrapArms(newFacing, robot.Position);
+                score += TryWrapArms(robot.Position, robot.RotateArms(turnAction.Direction));
             }
 
             return score;
         }
 
-        private int TryWrapArms(Direction facing, Point newPos)
+        private int TryWrapArms(Point newPos, List<Point> arms)
         {
             int score = 0;
-            if (facing == Direction.Right)
-            {
-                score += TryWrap(newPos.Right());
-                score += TryWrap(newPos.Right().Up());
-                score += TryWrap(newPos.Right().Down());
-            }
 
-            if (facing == Direction.Left)
+            foreach (var arm in arms)
             {
-                score += TryWrap(newPos.Left());
-                score += TryWrap(newPos.Left().Up());
-                score += TryWrap(newPos.Left().Down());
-            }
-
-            if (facing == Direction.Up)
-            {
-                score += TryWrap(newPos.Up());
-                score += TryWrap(newPos.Up().Left());
-                score += TryWrap(newPos.Up().Right());
-            }
-
-            if (facing == Direction.Down)
-            {
-                score += TryWrap(newPos.Down());
-                score += TryWrap(newPos.Down().Left());
-                score += TryWrap(newPos.Down().Right());
+                score += TryWrap(newPos.Translate(arm));
             }
 
             return score;

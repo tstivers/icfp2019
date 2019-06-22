@@ -78,5 +78,10 @@ namespace Contest.Core.Models
         {
             return Translate(Direction.Right);
         }
+
+        public Point Translate(Point p)
+        {
+            return new Point(X + p.X, Y + p.Y);
+        }
     }
 }

@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Contest.Visualizer
 {
-    public class Program
+    public class Visualizer
     {
         public static RLRootConsole rootConsole;
         public static Problem problem;
@@ -17,7 +17,7 @@ namespace Contest.Visualizer
         public static void Main()
         {
             var problemsPath = ProblemsFinder.FindProblemsFolderPath();
-            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-101.desc"), null);
+            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-002.desc"), null);
             controller = new SimpleController(problem);
 
             RLSettings settings = new RLSettings();
@@ -116,6 +116,11 @@ namespace Contest.Visualizer
 
                 if (r.Target.HasValue)
                     rootConsole.SetBackColor(r.Target.Value, RLColor.Blue);
+
+                foreach (var arm in r.Arms)
+                {
+                    rootConsole.SetBackColor(r.Position.Translate(arm), RLColor.LightGreen);
+                }
             }
 
             rootConsole.Draw();
