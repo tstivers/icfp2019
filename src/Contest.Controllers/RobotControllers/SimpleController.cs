@@ -1,18 +1,17 @@
 ﻿using Contest.Core.Models;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Contest.Controllers.RobotControllers
 {
     public class SimpleController
     {
         public Problem Problem { get; }
-        public SimplestController SimplestController { get; }
+        public DijkstraController SimplestController { get; }
 
         public SimpleController(Problem problem)
         {
             Problem = problem;
-            SimplestController = new SimplestController(problem);
+            SimplestController = new DijkstraController(problem);
         }
 
         public IEnumerable<RobotAction> GetNextActions()
@@ -23,7 +22,7 @@ namespace Contest.Controllers.RobotControllers
             // get scores for all actions
             var actions = new[]
             {
-                RobotAction.Up, RobotAction.Down, RobotAction.Left, RobotAction.Right, RobotAction.TurnLeft,
+                /*RobotAction.Up, RobotAction.Down, RobotAction.Left, RobotAction.Right,*/ RobotAction.TurnLeft,
                 RobotAction.TurnRight
             };
 
@@ -42,11 +41,10 @@ namespace Contest.Controllers.RobotControllers
 
             if (bestScore > 0)
             {
-                SimplestController.PriorTarget = null;
                 return new[] { bestAction };
             }
 
-            return SimplestController.GetNextActions().Take(1);
+            return SimplestController.GetNextActions();
         }
     }
 }

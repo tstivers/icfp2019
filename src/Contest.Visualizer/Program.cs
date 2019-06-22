@@ -17,7 +17,7 @@ namespace Contest.Visualizer
         public static void Main()
         {
             var problemsPath = ProblemsFinder.FindProblemsFolderPath();
-            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-100.desc"), null);
+            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-101.desc"), null);
             controller = new SimpleController(problem);
 
             RLSettings settings = new RLSettings();
