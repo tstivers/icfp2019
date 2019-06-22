@@ -14,15 +14,7 @@ namespace Contest.Controllers.PathFinders
             var Q = new SimplePriorityQueue<Point, int>();
 
             dist[start] = 0;
-
-            for (int y = 0; y < map.Height; y++)
-                for (int x = 0; x < map.Width; x++)
-                {
-                    var p = new Point(x, y);
-                    if (p != start)
-                        dist[p] = int.MaxValue / 2;
-                    Q.Enqueue(p, dist[p]);
-                }
+            Q.Enqueue(start, 0);
 
             while (Q.Count > 0)
             {
@@ -36,11 +28,14 @@ namespace Contest.Controllers.PathFinders
                 {
                     var alt = dist[u] + 1;
 
-                    if (alt < dist[v])
+                    if (!dist.ContainsKey(v) || alt < dist[v])
                     {
                         dist[v] = alt;
                         prev[v] = u;
-                        Q.UpdatePriority(v, alt);
+                        if (Q.Contains(v))
+                            Q.UpdatePriority(v, alt);
+                        else
+                            Q.Enqueue(v, alt);
                     }
                 }
             };

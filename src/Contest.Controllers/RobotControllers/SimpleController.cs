@@ -1,5 +1,6 @@
 ﻿using Contest.Core.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Contest.Controllers.RobotControllers
 {
@@ -22,7 +23,7 @@ namespace Contest.Controllers.RobotControllers
             // get scores for all actions
             var actions = new[]
             {
-                /*RobotAction.Up, RobotAction.Down, RobotAction.Left, RobotAction.Right,*/ RobotAction.TurnLeft,
+                RobotAction.Up, RobotAction.Down, RobotAction.Left, RobotAction.Right, RobotAction.TurnLeft,
                 RobotAction.TurnRight
             };
 
@@ -44,7 +45,7 @@ namespace Contest.Controllers.RobotControllers
                 return new[] { bestAction };
             }
 
-            return SimplestController.GetNextActions();
+            return SimplestController.GetNextActions().Take(1);
         }
     }
 }
