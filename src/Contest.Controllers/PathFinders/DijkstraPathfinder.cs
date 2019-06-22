@@ -1,5 +1,6 @@
 ﻿using Contest.Core.Models;
 using Priority_Queue;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +8,7 @@ namespace Contest.Controllers.PathFinders
 {
     public sealed class DijkstraPathfinder
     {
-        public static Queue<RobotAction> ClosestUnwrappedCell(Point start, Map map)
+        public static Tuple<Point, Queue<RobotAction>> ClosestUnwrappedCell(Point start, Map map)
         {
             var dist = new Dictionary<Point, int>();
             var prev = new Dictionary<Point, Point>();
@@ -43,8 +44,9 @@ namespace Contest.Controllers.PathFinders
             return null;
         }
 
-        private static Queue<RobotAction> GetActions(Point start, Point target, Dictionary<Point, Point> prev)
+        private static Tuple<Point, Queue<RobotAction>> GetActions(Point start, Point target, Dictionary<Point, Point> prev)
         {
+            var end = target;
             var path = new Queue<RobotAction>();
 
             while (target != start)
@@ -63,7 +65,7 @@ namespace Contest.Controllers.PathFinders
                 target = pos;
             }
 
-            return new Queue<RobotAction>(path.Reverse());
+            return Tuple.Create(end, new Queue<RobotAction>(path.Reverse()));
         }
     }
 }

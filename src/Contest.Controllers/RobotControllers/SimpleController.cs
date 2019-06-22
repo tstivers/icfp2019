@@ -7,19 +7,16 @@ namespace Contest.Controllers.RobotControllers
     public class SimpleController
     {
         public Problem Problem { get; }
-        public DijkstraController SimplestController { get; }
+        public DijkstraController DijkstraController { get; }
 
         public SimpleController(Problem problem)
         {
             Problem = problem;
-            SimplestController = new DijkstraController(problem);
+            DijkstraController = new DijkstraController(problem);
         }
 
-        public IEnumerable<RobotAction> GetNextActions()
+        public IEnumerable<RobotAction> GetNextActions(Robot robot)
         {
-            Problem.Targets = null;
-            Problem.Target = null;
-
             // get scores for all actions
             var actions = new[]
             {
@@ -32,7 +29,7 @@ namespace Contest.Controllers.RobotControllers
 
             for (int i = 0; i < actions.Length; i++)
             {
-                var score = Problem.ScoreAction(actions[i]);
+                var score = Problem.ScoreAction(robot, actions[i]);
                 if (score > 1 && score >= bestScore)
                 {
                     bestScore = score;
@@ -45,7 +42,7 @@ namespace Contest.Controllers.RobotControllers
                 return new[] { bestAction };
             }
 
-            return SimplestController.GetNextActions().Take(1);
+            return DijkstraController.GetNextActions(robot).Take(1);
         }
     }
 }

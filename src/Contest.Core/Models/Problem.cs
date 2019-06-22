@@ -8,70 +8,67 @@ namespace Contest.Core.Models
     {
         public string ProblemText { get; internal set; }
         public Map Map { get; set; }
+        public List<Robot> Robots { get; set; } = new List<Robot>();
+        public string Name { get; set; }
 
-        public Robot Robot { get; set; }
-
-        public void ProcessAction(RobotAction action)
+        public void ProcessAction(Robot robot, RobotAction action)
         {
             if (action is RobotMoveAction moveAction)
             {
-                Robot.Position = Robot.Position.Translate(moveAction.Direction);
-                Wrap(Robot.Position);
-                WrapArms();
-                Actions.Add(action);
+                robot.Position = robot.Position.Translate(moveAction.Direction);
+                Wrap(robot.Position);
+                WrapArms(robot);
+                robot.Actions.Add(action);
             }
 
             if (action is RobotTurnAction turnAction)
             {
-                Robot.Rotate(turnAction.Direction);
-                WrapArms();
-                Actions.Add(action);
+                robot.Rotate(turnAction.Direction);
+                WrapArms(robot);
+                robot.Actions.Add(action);
             }
         }
 
-        public void ProcessAction(IEnumerable<RobotAction> actions)
+        public void ProcessAction(Robot robot, IEnumerable<RobotAction> actions)
         {
             foreach (var action in actions)
-                ProcessAction(action);
+                ProcessAction(robot, action);
         }
-
-        public List<RobotAction> Actions { get; } = new List<RobotAction>();
 
         public string Solution
         {
-            get { return string.Concat(Actions.Select(x => x.ToString())); }
+            get
+            {
+                return string.Join("#", Robots.Select(x => string.Concat(x.Actions.Select(y => y.ToString()))));
+            }
         }
 
-        public string Name { get; set; }
-        public List<Point> Targets { get; set; }
-        public Point? Target { get; set; }
-
-        public void WrapArms()
+        public void WrapArms(Robot robot)
         {
-            Wrap(Robot.Position.Translate(Robot.Facing));
+            Wrap(robot.Position.Translate(robot.Facing));
 
-            if (Robot.Facing == Direction.Right)
+            if (robot.Facing == Direction.Right)
             {
-                Wrap(Robot.Position.Right().Up());
-                Wrap(Robot.Position.Right().Down());
+                Wrap(robot.Position.Right().Up());
+                Wrap(robot.Position.Right().Down());
             }
 
-            if (Robot.Facing == Direction.Left)
+            if (robot.Facing == Direction.Left)
             {
-                Wrap(Robot.Position.Left().Up());
-                Wrap(Robot.Position.Left().Down());
+                Wrap(robot.Position.Left().Up());
+                Wrap(robot.Position.Left().Down());
             }
 
-            if (Robot.Facing == Direction.Up)
+            if (robot.Facing == Direction.Up)
             {
-                Wrap(Robot.Position.Up().Left());
-                Wrap(Robot.Position.Up().Right());
+                Wrap(robot.Position.Up().Left());
+                Wrap(robot.Position.Up().Right());
             }
 
-            if (Robot.Facing == Direction.Down)
+            if (robot.Facing == Direction.Down)
             {
-                Wrap(Robot.Position.Down().Left());
-                Wrap(Robot.Position.Down().Right());
+                Wrap(robot.Position.Down().Left());
+                Wrap(robot.Position.Down().Right());
             }
         }
 
@@ -89,13 +86,13 @@ namespace Contest.Core.Models
             return 0;
         }
 
-        public int ScoreAction(RobotAction action)
+        public int ScoreAction(Robot robot, RobotAction action)
         {
             int score = 0;
 
             if (action is RobotMoveAction moveAction)
             {
-                var newPos = Robot.Position.Translate(moveAction.Direction);
+                var newPos = robot.Position.Translate(moveAction.Direction);
                 var cellAtNewPos = Map.CellAt(newPos);
 
                 // illegal move
@@ -107,13 +104,13 @@ namespace Contest.Core.Models
                     score = 1;
 
                 // calc arms
-                score += TryWrapArms(Robot.Facing, newPos);
+                score += TryWrapArms(robot.Facing, newPos);
             }
 
             if (action is RobotTurnAction turnAction)
             {
-                var newFacing = Robot.Facing.Rotate(turnAction.Direction);
-                score += TryWrapArms(newFacing, Robot.Position);
+                var newFacing = robot.Facing.Rotate(turnAction.Direction);
+                score += TryWrapArms(newFacing, robot.Position);
             }
 
             return score;

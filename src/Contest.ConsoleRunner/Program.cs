@@ -39,17 +39,20 @@ namespace Contest.ConsoleRunner
 
                 do
                 {
-                    var actions = controller.GetNextActions();
-                    if (actions.Count() == 1 && actions.First() is RobotDoneAction)
+                    foreach (var robot in problem.Robots)
                     {
-                        var solutionFile = Path.Combine(a.SolutionsFolder, problem.Name + ".sol");
-                        File.WriteAllText(solutionFile, problem.Solution);
+                        var actions = controller.GetNextActions(robot);
+                        if (actions.Count() == 1 && actions.First() is RobotDoneAction)
+                        {
+                            var solutionFile = Path.Combine(a.SolutionsFolder, problem.Name + ".sol");
+                            File.WriteAllText(solutionFile, problem.Solution);
 
-                        Console.WriteLine($"Done with {problem.Name}");
-                        break;
+                            Console.WriteLine($"Done with {problem.Name}");
+                            break;
+                        }
+
+                        problem.ProcessAction(robot, actions);
                     }
-
-                    problem.ProcessAction(actions);
                 } while (true);
             });
         }

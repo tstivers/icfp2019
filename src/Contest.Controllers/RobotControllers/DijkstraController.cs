@@ -13,14 +13,14 @@ namespace Contest.Controllers.RobotControllers
             Problem = problem;
         }
 
-        public IEnumerable<RobotAction> GetNextActions()
+        public IEnumerable<RobotAction> GetNextActions(Robot robot)
         {
-            var actions = DijkstraPathfinder.ClosestUnwrappedCell(Problem.Robot.Position, Problem.Map);
+            var result = DijkstraPathfinder.ClosestUnwrappedCell(robot.Position, Problem.Map);
 
-            if (actions == null)
+            if (result == null)
                 return new[] { RobotAction.Done };
 
-            return actions;
+            return result.Item2;
         }
     }
 }

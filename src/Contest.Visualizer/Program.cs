@@ -57,15 +57,18 @@ namespace Contest.Visualizer
                 if (keyPress.Key == RLKey.R)
                 {
                     var problemsPath = ProblemsFinder.FindProblemsFolderPath();
-                    problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-026.desc"), null);
+                    problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, problem.Name + ".desc"), null);
                     controller = new SimpleController(problem);
                     start = false;
                 }
 
                 if (keyPress.Key == RLKey.S)
                 {
-                    var actions = controller.GetNextActions();
-                    problem.ProcessAction(actions);
+                    foreach (var robot in problem.Robots)
+                    {
+                        var actions = controller.GetNextActions(robot);
+                        problem.ProcessAction(robot, actions);
+                    }
                 }
             }
 
@@ -76,30 +79,44 @@ namespace Contest.Visualizer
 
             if (start)
             {
-                var actions = controller.GetNextActions();
-                problem.ProcessAction(actions);
+                foreach (var robot in problem.Robots)
+                {
+                    var actions = controller.GetNextActions(robot);
+                    problem.ProcessAction(robot, actions);
+                }
             }
         }
 
         private static void rootConsole_Render(object sender, UpdateEventArgs e)
         {
             rootConsole.Clear();
-            for (int y = 0; y < problem.Map.Height; y++)
-                for (int x = 0; x < problem.Map.Width; x++)
-                    rootConsole.SetChar(x, problem.Map.Height - y - 1, (char)problem.Map.Cells[y][x]);
+            Point p = new Point(0, 0);
 
-            rootConsole.SetChar(problem.Robot.Position.X, problem.Map.Height - problem.Robot.Position.Y - 1, 'R');
-            rootConsole.SetColor(problem.Robot.Position.X, problem.Map.Height - problem.Robot.Position.Y - 1, RLColor.LightGreen);
-            rootConsole.SetBackColor(problem.Robot.Front.X, problem.Map.Height - problem.Robot.Front.Y - 1, RLColor.LightGreen);
-
-            if (problem.Targets != null)
-                foreach (var target in problem.Targets)
+            for (p.Y = 0; p.Y < problem.Map.Height; p.Y++)
+                for (p.X = 0; p.X < problem.Map.Width; p.X++)
                 {
-                    rootConsole.SetBackColor(target, RLColor.LightBlue);
+                    var value = problem.Map.CellAt(p);
+                    if (value != Map.CellType.Wrapped)
+                    {
+                        rootConsole.SetChar(p, (char)value);
+                        if (value == Map.CellType.Wall)
+                            rootConsole.SetColor(p, RLColor.LightGray);
+                    }
+                    else
+                    {
+                        rootConsole.SetChar(p, ' ');
+                        rootConsole.SetBackColor(p, RLColor.Yellow);
+                    }
                 }
 
-            if (problem.Target.HasValue)
-                rootConsole.SetBackColor(problem.Target.Value, RLColor.Blue);
+            foreach (var r in problem.Robots)
+            {
+                rootConsole.SetChar(r.Position, 'R');
+                rootConsole.SetColor(r.Position, RLColor.LightGreen);
+
+                if (r.Target.HasValue)
+                    rootConsole.SetBackColor(r.Target.Value, RLColor.Blue);
+            }
 
             rootConsole.Draw();
         }

@@ -9,21 +9,17 @@ namespace Contest.Controllers.RobotControllers
     {
         public Problem Problem { get; }
 
-        public Point? PriorTarget { get; set; }
-
         public SimplestController(Problem problem)
         {
             Problem = problem;
         }
 
-        public IEnumerable<RobotAction> GetNextActions()
+        public IEnumerable<RobotAction> GetNextActions(Robot robot)
         {
             // find the closest unwrapped cells
             var finder = new SimpleTargetSelector(Problem.Map);
 
-            var targets = finder.GetPotentialTargets(Problem.Robot.Position, 1);
-
-            Problem.Targets = targets;
+            var targets = finder.GetPotentialTargets(robot.Position, 1);
 
             // sort them by moves
             var bestScore = int.MaxValue;
@@ -36,19 +32,19 @@ namespace Contest.Controllers.RobotControllers
 
             foreach (var p in targets)
             {
-                var route = rf.GetRouteTo(Problem.Robot.Position, p);
+                var route = rf.GetRouteTo(robot.Position, p);
 
                 if (route.Count <= bestScore)
                 {
                     bestScore = route.Count;
                     bestRoute = route;
-                    Problem.Target = p;
+                    robot.Target = p;
                 }
             }
 
-            if (PriorTarget != null && Problem.Target != PriorTarget)
+            if (robot.PriorTarget != null && robot.Target != robot.PriorTarget)
             {
-                var priorRoute = rf.GetRouteTo(Problem.Robot.Position, PriorTarget.Value);
+                var priorRoute = rf.GetRouteTo(robot.Position, robot.PriorTarget.Value);
                 if (priorRoute.Count != 0)
                 {
                     if (priorRoute.Count <= bestScore)
@@ -58,7 +54,7 @@ namespace Contest.Controllers.RobotControllers
                 }
             }
 
-            PriorTarget = Problem.Target;
+            robot.PriorTarget = robot.Target;
             return bestRoute;
         }
     }

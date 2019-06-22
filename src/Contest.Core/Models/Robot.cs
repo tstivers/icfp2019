@@ -1,4 +1,5 @@
 ﻿using Contest.Core.Extensions;
+using System.Collections.Generic;
 
 namespace Contest.Core.Models
 {
@@ -17,6 +18,11 @@ namespace Contest.Core.Models
         public Direction Facing { get; set; }
 
         public Point Front => Position.Translate(Facing);
+
+        public Point? Target { get; set; }
+        public Point? PriorTarget { get; set; }
+
+        public List<RobotAction> Actions { get; } = new List<RobotAction>();
 
         public void Rotate(Direction direction)
         {

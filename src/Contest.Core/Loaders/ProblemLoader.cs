@@ -23,11 +23,11 @@ namespace Contest.Core.Loaders
             var startPos = ParsePoints(sectionsMatch.Groups[2].Value)[0];
             var boosters = ParseBoosters(sectionsMatch.Groups[4].Value);
 
-            p.Robot = new Robot
+            p.Robots.Add(new Robot
             {
                 Position = startPos,
                 Facing = Direction.Right
-            };
+            });
 
             var cacheFile = cacheFolder == null ? null : Path.Combine(cacheFolder, Path.GetFileNameWithoutExtension(filename) + ".cache");
 
@@ -56,8 +56,8 @@ namespace Contest.Core.Loaders
                 p.Map = new Map(LoadCells(cacheFile));
             }
 
-            p.Wrap(p.Robot.Position);
-            p.WrapArms();
+            p.Wrap(p.Robots[0].Position);
+            p.WrapArms(p.Robots[0]);
 
             return p;
         }

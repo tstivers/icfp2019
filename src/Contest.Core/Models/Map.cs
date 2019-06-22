@@ -69,9 +69,7 @@ namespace Contest.Core.Models
             var x = sx + 0.5;
             var y = sy + 0.5;
 
-            var tx = -0.5;
-            var ty = sy + 0.5;
-            int count = 0;
+            var count = 0;
 
             foreach (var line in lines)
             {
@@ -96,6 +94,14 @@ namespace Contest.Core.Models
                 return CellType.Wall;
 
             return Cells[p.Y][p.X];
+        }
+
+        public CellType CellAt(int x, int y)
+        {
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+                return CellType.Wall;
+
+            return Cells[y][x];
         }
 
         public IEnumerable<Point> Neighbors(Point current)
