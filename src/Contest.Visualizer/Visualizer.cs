@@ -5,6 +5,7 @@ using Contest.Core.Models;
 using RLNET;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Contest.Visualizer
 {
@@ -16,9 +17,7 @@ namespace Contest.Visualizer
 
         public static void Main()
         {
-            var problemsPath = ProblemsFinder.FindProblemsFolderPath();
-            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-290.desc"), null);
-            controller = new CheckTurnsController(problem, new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem))));
+            ResetSimulation();
 
             RLSettings settings = new RLSettings();
             settings.BitmapFile = "ascii_8x8.png";
@@ -56,19 +55,12 @@ namespace Contest.Visualizer
 
                 if (keyPress.Key == RLKey.R)
                 {
-                    var problemsPath = ProblemsFinder.FindProblemsFolderPath();
-                    problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, problem.Name + ".desc"), null);
-                    controller = new ScoreSingleActionsController(problem, new DijkstraController(problem));
-                    start = false;
+                    ResetSimulation();
                 }
 
                 if (keyPress.Key == RLKey.S)
                 {
-                    foreach (var robot in problem.Robots)
-                    {
-                        var actions = controller.GetNextActions(robot);
-                        problem.ProcessAction(robot, actions);
-                    }
+                    StepSimulation();
                 }
             }
 
@@ -79,12 +71,34 @@ namespace Contest.Visualizer
 
             if (start)
             {
-                foreach (var robot in problem.Robots)
-                {
-                    var actions = controller.GetNextActions(robot);
-                    problem.ProcessAction(robot, actions);
-                }
+                StepSimulation();
             }
+        }
+
+        private static void StepSimulation()
+        {
+            foreach (var robot in problem.Robots)
+            {
+                var actions = controller.GetNextActions(robot);
+
+                if (actions.First() is RobotDoneAction)
+                {
+                    start = false;
+                    Console.WriteLine($"Moves: {problem.Solution.Length}");
+                }
+                else
+                    problem.ProcessAction(robot, actions);
+            }
+        }
+
+        public static void ResetSimulation()
+        {
+            var problemsPath = ProblemsFinder.FindProblemsFolderPath();
+            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-021.desc"), null);
+            controller = new CheckTurnsController(problem, new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem))));
+            //controller = new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem)));
+            //controller = new ScoreSingleActionsController(problem, new DijkstraController(problem));
+            start = false;
         }
 
         private static void rootConsole_Render(object sender, UpdateEventArgs e)

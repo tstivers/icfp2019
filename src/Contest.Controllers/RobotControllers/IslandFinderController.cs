@@ -49,7 +49,7 @@ namespace Contest.Controllers.RobotControllers
                 if (found)
                     continue;
 
-                var np = DijkstraPathfinder.FindUnwrappedCellsWithin(t, Problem.Map, 1000, true);
+                var np = DijkstraPathfinder.FindUnwrappedCellsWithin(t, Problem.Map, 100, true);
                 if (np.Count > 50)
                     np.ToList().ForEach(x => notIslands.Add(x)); // not an island, mark 'em
                 else
