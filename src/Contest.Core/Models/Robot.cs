@@ -42,6 +42,11 @@ namespace Contest.Core.Models
             Arms = RotateArms(direction);
         }
 
+        public List<Point> RotateArms(List<Point> arms, Direction direction)
+        {
+            return arms.Select(x => RotatePoint(x, direction)).ToList();
+        }
+
         public List<Point> RotateArms(Direction direction)
         {
             return Arms.Select(x => RotatePoint(x, direction)).ToList();

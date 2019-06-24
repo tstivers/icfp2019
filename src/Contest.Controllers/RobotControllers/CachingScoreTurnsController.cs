@@ -4,11 +4,16 @@ using System.Linq;
 
 namespace Contest.Controllers.RobotControllers
 {
-    public class ScoreTurnActionsController : RobotController, IRobotController
+    public class CachingScoreTurnActionsController : RobotController, IRobotController
     {
+        public Queue<RobotAction> ActionsCache;
+
         public IEnumerable<RobotAction> GetNextActions(Robot robot)
         {
-            var currentAction = NextController.GetNextActions(robot).First();
+            if (ActionsCache == null || ActionsCache.Count == 0)
+                ActionsCache = new Queue<RobotAction>(NextController.GetNextActions(robot).ToList());
+
+            var currentAction = ActionsCache.Dequeue();
             var currentScore = Problem.ScoreAction(robot, currentAction);
 
             // get scores for turn actions
@@ -27,13 +32,14 @@ namespace Contest.Controllers.RobotControllers
                 {
                     bestScore = score;
                     bestAction = actions[i];
+                    ActionsCache.Clear();
                 }
             }
 
             return new[] { bestAction };
         }
 
-        public ScoreTurnActionsController(Problem problem, IRobotController nextController) : base(problem, nextController)
+        public CachingScoreTurnActionsController(Problem problem, IRobotController nextController) : base(problem, nextController)
         {
         }
     }

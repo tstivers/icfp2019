@@ -104,5 +104,57 @@ namespace Contest.Core.Models
 
             return score;
         }
+
+        public int ScoreActions(Robot robot, List<RobotAction> actions)
+        {
+            var wrapped = new HashSet<Point>();
+            var robotPos = robot.Position;
+            var robotFacing = robot.Facing;
+            var robotArms = robot.Arms;
+
+            foreach (var action in actions)
+            {
+                if (action is RobotMoveAction moveAction)
+                {
+                    robotPos = robotPos.Translate(moveAction.Direction);
+                    var cellAtNewPos = Map.CellAt(robotPos);
+
+                    // illegal move
+                    if (cellAtNewPos == Map.CellType.Wall)
+                        return 0;
+
+                    // 1 for the robot
+                    if (cellAtNewPos == Map.CellType.Empty)
+                        wrapped.Add(robotPos);
+
+                    // calc arms
+                    TryWrapArms(robotPos, robotArms, wrapped);
+                }
+
+                if (action is RobotTurnAction turnAction)
+                {
+                    robotFacing = robotFacing.Rotate(turnAction.Direction);
+                    robotArms = robot.RotateArms(robotArms, turnAction.Direction);
+
+                    TryWrapArms(robotPos, robotArms, wrapped);
+                }
+            }
+
+            return wrapped.Count;
+        }
+
+        private void TryWrapArms(Point pos, List<Point> arms, HashSet<Point> wrapped)
+        {
+            foreach (var arm in arms)
+            {
+                TryWrap(pos.Translate(arm), wrapped);
+            }
+        }
+
+        private void TryWrap(Point point, HashSet<Point> wrapped)
+        {
+            if (Map.CellAt(point) == Map.CellType.Empty)
+                wrapped.Add(point);
+        }
     }
 }

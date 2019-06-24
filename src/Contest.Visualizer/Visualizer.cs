@@ -62,6 +62,13 @@ namespace Contest.Visualizer
                 {
                     StepSimulation();
                 }
+
+                if (keyPress.Key == RLKey.C)
+                {
+                    start = true;
+                    while (start)
+                        StepSimulation();
+                }
             }
 
             if (rootConsole.Mouse.GetLeftClick())
@@ -94,8 +101,11 @@ namespace Contest.Visualizer
         public static void ResetSimulation()
         {
             var problemsPath = ProblemsFinder.FindProblemsFolderPath();
-            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-021.desc"), null);
-            controller = new ScoreTurnActionsController(problem, new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem))));
+            problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-150.desc"), null);
+
+            //controller = new CachingScoreTurnActionsController(problem, new SmartIslandController(problem, null));
+            //controller = new ScoreTurnActionsController(problem, new SmartIslandController(problem, null));
+            controller = new ScoreTurnActionsController(problem, new IslandFinderController(problem, new ScoreNActionsController(problem, new DijkstraController(problem))));
             //controller = new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem)));
             //controller = new ScoreSingleActionsController(problem, new DijkstraController(problem));
             start = false;
@@ -128,12 +138,12 @@ namespace Contest.Visualizer
                 rootConsole.SetChar(r.Position, 'R');
                 rootConsole.SetColor(r.Position, RLColor.LightGreen);
 
-                if (r.Target.HasValue)
-                    rootConsole.SetBackColor(r.Target.Value, RLColor.Blue);
-
                 if (r.Targets != null)
                     foreach (var t in r.Targets)
                         rootConsole.SetBackColor(t, RLColor.Red);
+
+                if (r.Target.HasValue)
+                    rootConsole.SetBackColor(r.Target.Value, RLColor.Blue);
 
                 foreach (var arm in r.Arms)
                 {

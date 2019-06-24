@@ -108,5 +108,42 @@ namespace Contest.Controllers.PathFinders
 
             return found;
         }
+
+        public static Tuple<Point, Queue<RobotAction>> RouteToClosestCell(Point start, HashSet<Point> targets, Map map)
+        {
+            var dist = new Dictionary<Point, int>();
+            var prev = new Dictionary<Point, Point>();
+            var Q = new SimplePriorityQueue<Point, int>();
+
+            dist[start] = 0;
+            Q.Enqueue(start, 0);
+
+            while (Q.Count > 0)
+            {
+                var u = Q.Dequeue();
+
+                if (targets.Contains(u))
+                {
+                    return GetActions(start, u, prev);
+                }
+
+                var alt = dist[u] + 1;
+
+                foreach (var v in map.Neighbors(u))
+                {
+                    if (!dist.ContainsKey(v) || alt < dist[v])
+                    {
+                        dist[v] = alt;
+                        prev[v] = u;
+                        if (Q.Contains(v))
+                            Q.UpdatePriority(v, alt);
+                        else
+                            Q.Enqueue(v, alt);
+                    }
+                }
+            };
+
+            return null;
+        }
     }
 }
