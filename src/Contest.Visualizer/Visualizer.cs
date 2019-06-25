@@ -25,7 +25,7 @@ namespace Contest.Visualizer
             settings.CharHeight = 8;
             settings.Width = problem.Map.Width;
             settings.Height = problem.Map.Height;
-            settings.Scale = 1.0f;
+            settings.Scale = 0.25f;
             settings.Title = "RLNET Sample";
             //settings.WindowBorder = RLWindowBorder.Resizable;
             //settings.ResizeType = RLResizeType.ResizeCells;
@@ -103,11 +103,13 @@ namespace Contest.Visualizer
             var problemsPath = ProblemsFinder.FindProblemsFolderPath();
             problem = ProblemLoader.LoadProblem(Path.Combine(problemsPath, "prob-150.desc"), null);
 
+            controller = new ScoreNActionsController(problem, new SmartIslandController(problem, null));
+            //controller = new ScoreNActionsController(problem, new IslandFinderController(problem, new ScoreNActionsController(problem, new DijkstraController(problem))));
             //controller = new CachingScoreTurnActionsController(problem, new SmartIslandController(problem, null));
             //controller = new ScoreTurnActionsController(problem, new SmartIslandController(problem, null));
-            controller = new ScoreTurnActionsController(problem, new IslandFinderController(problem, new ScoreNActionsController(problem, new DijkstraController(problem))));
+            //controller = new ScoreTurnActionsController(problem, new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem))));
             //controller = new IslandFinderController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem)));
-            //controller = new ScoreSingleActionsController(problem, new DijkstraController(problem));
+            //controller = new ScoreTurnActionsController(problem, new ScoreSingleActionsController(problem, new DijkstraController(problem)));
             start = false;
         }
 
@@ -136,7 +138,7 @@ namespace Contest.Visualizer
             foreach (var r in problem.Robots)
             {
                 rootConsole.SetChar(r.Position, 'R');
-                rootConsole.SetColor(r.Position, RLColor.LightGreen);
+                rootConsole.SetColor(r.Position, RLColor.Cyan);
 
                 if (r.Targets != null)
                     foreach (var t in r.Targets)
