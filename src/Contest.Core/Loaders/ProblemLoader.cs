@@ -56,7 +56,6 @@ namespace Contest.Core.Loaders
                 p.Map = new Map(LoadCells(cacheFile));
             }
 
-            p.Wrap(p.Robots[0].Position);
             p.WrapArms(p.Robots[0]);
 
             return p;

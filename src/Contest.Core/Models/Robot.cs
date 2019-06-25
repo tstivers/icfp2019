@@ -24,12 +24,13 @@ namespace Contest.Core.Models
         public Point? PriorTarget { get; set; }
 
         public List<RobotAction> Actions { get; } = new List<RobotAction>();
-        public List<Point> Targets { get; set; }
+        public HashSet<Point> Targets { get; set; }
 
         public Robot()
         {
             Arms = new List<Point>()
             {
+                new Point(0, 0),
                 new Point(1, 0),
                 new Point(1, 1),
                 new Point(1, -1)

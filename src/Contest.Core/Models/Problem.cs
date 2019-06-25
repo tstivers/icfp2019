@@ -1,5 +1,6 @@
 ﻿using Contest.Core.Extensions;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Contest.Core.Models
@@ -16,7 +17,6 @@ namespace Contest.Core.Models
             if (action is RobotMoveAction moveAction)
             {
                 robot.Position = robot.Position.Translate(moveAction.Direction);
-                Wrap(robot.Position);
                 WrapArms(robot);
                 robot.Actions.Add(action);
             }
@@ -31,6 +31,8 @@ namespace Contest.Core.Models
 
         public void ProcessAction(Robot robot, IEnumerable<RobotAction> actions)
         {
+            Debug.Assert(actions.Count() == 1);
+
             foreach (var action in actions)
                 ProcessAction(robot, action);
         }
@@ -105,7 +107,7 @@ namespace Contest.Core.Models
             return score;
         }
 
-        public int ScoreActions(Robot robot, List<RobotAction> actions)
+        public int ScoreActions(Robot robot, List<RobotAction> actions, HashSet<Point> targets = null)
         {
             var wrapped = new HashSet<Point>();
             var robotPos = robot.Position;
@@ -123,12 +125,8 @@ namespace Contest.Core.Models
                     if (cellAtNewPos == Map.CellType.Wall)
                         return 0;
 
-                    // 1 for the robot
-                    if (cellAtNewPos == Map.CellType.Empty)
-                        wrapped.Add(robotPos);
-
                     // calc arms
-                    TryWrapArms(robotPos, robotArms, wrapped);
+                    TryWrapArms(robotPos, robotArms, wrapped, targets);
                 }
 
                 if (action is RobotTurnAction turnAction)
@@ -136,24 +134,30 @@ namespace Contest.Core.Models
                     robotFacing = robotFacing.Rotate(turnAction.Direction);
                     robotArms = robot.RotateArms(robotArms, turnAction.Direction);
 
-                    TryWrapArms(robotPos, robotArms, wrapped);
+                    TryWrapArms(robotPos, robotArms, wrapped, targets);
                 }
             }
 
             return wrapped.Count;
         }
 
-        private void TryWrapArms(Point pos, List<Point> arms, HashSet<Point> wrapped)
+        private void TryWrapArms(Point pos, List<Point> arms, HashSet<Point> wrapped, HashSet<Point> targets)
         {
             foreach (var arm in arms)
             {
-                TryWrap(pos.Translate(arm), wrapped);
+                TryWrap(pos.Translate(arm), wrapped, targets);
             }
         }
 
-        private void TryWrap(Point point, HashSet<Point> wrapped)
+        private void TryWrap(Point point, HashSet<Point> wrapped, HashSet<Point> targets)
         {
-            if (Map.CellAt(point) == Map.CellType.Empty)
+            if (targets != null)
+            {
+                if (targets.Contains(point))
+                    wrapped.Add(point);
+            }
+            else
+                if (Map.CellAt(point) == Map.CellType.Empty)
                 wrapped.Add(point);
         }
     }
