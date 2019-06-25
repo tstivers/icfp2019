@@ -64,7 +64,7 @@ namespace Contest.Controllers.RobotControllers
                 return NextController.GetNextActions(robot);
 
             // paint islands
-            robot.Targets = islands.Values.SelectMany(x => x).ToList();
+            robot.Targets = new HashSet<Point>(islands.Values.SelectMany(x => x));
 
             // find the closest point in the smallest island
             var closestScore = int.MaxValue;

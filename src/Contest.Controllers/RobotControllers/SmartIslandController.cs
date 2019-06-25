@@ -48,7 +48,7 @@ namespace Contest.Controllers.RobotControllers
 
             // find smallest island
             var smallestIsland = islands.OrderBy(x => x.Count).First();
-            robot.Targets = smallestIsland.ToList();
+            robot.Targets = smallestIsland;
 
             // dij a path to it
             var route = DijkstraPathfinder.RouteToClosestCell(robot.Position, smallestIsland, Problem.Map);
